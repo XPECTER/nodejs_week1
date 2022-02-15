@@ -37,8 +37,8 @@ router.post("/articles", async (req, res) => {
         articleTitle, 
         articleContent,
         articleWriter,
-        articleCreateTime : now.toLocaleString('ko-KR'),
-        articleModifyTime : now.toLocaleString('ko-KR')
+        articleCreateTime : now.toLocaleString(),
+        articleModifyTime : now.toLocaleString()
     });
 
     return res.status(201).json({ success: true });
@@ -58,7 +58,7 @@ router.put("/articles/:articleId", async (req, res) => {
             articleTitle,
             articleContent,
             articleWriter,
-            articleModifyTime : now.toLocaleString('ko-KR')
+            articleModifyTime : now.toLocaleString()
         } });
         return res.status(200).json({ success: true })
     } else {
@@ -83,12 +83,12 @@ router.delete("/articles/:articleId", async (req, res) => {
 
 // 댓글 API
 // 댓글 조회
-router.get("articles/:articleId/comment", async (req, res) => {
+router.get("/articles/:articleId/comments", async (req, res) => {
     const articleId = mongoose.Types.ObjectId(req.params.articleId);
 
     const existsArticle = await Articles.findById({ _id: articleId });
     if (existsArticle) {
-        const comments = await Comments.find({ articleId: articleId })
+        const comments = await Comments.find({ articleId: articleId }).sort({ commentCreateDate: -1 })
         return res.json({ 
             comments,
         });
@@ -98,13 +98,13 @@ router.get("articles/:articleId/comment", async (req, res) => {
 });
 
 // 댓글 작성
-router.post("articles/:articleId/comment", async (req, res) => {
+router.post("/articles/:articleId/comments", async (req, res) => {
     const articleId = mongoose.Types.ObjectId(req.params.articleId);
-    const { commentWriter } = req.body;
-    const { commentContent } = req.body;
+    const { commentWriter, commentContent } = req.body;
     const now = new Date();
 
-    console.log(articleId, commentWriter, commentContent);
+    if (!commentContent.length)
+        return res.status(400).json({ success: false, errorMessage: "댓글 내용을 입력해주세요." });
 
     const existsArticle = await Articles.findOne( { _id : articleId });
     if (existsArticle) {
@@ -112,8 +112,8 @@ router.post("articles/:articleId/comment", async (req, res) => {
             articleId,
             commentWriter, 
             commentContent,
-            commentCreateDate: now.toLocaleString('ko-KR'),
-            commentModifyDate: now.toLocaleString('ko-KR')
+            commentCreateDate: now.toLocaleString(),
+            commentModifyDate: now.toLocaleString()
         });
     
         return res.status(201).json({ success: true })
@@ -123,15 +123,23 @@ router.post("articles/:articleId/comment", async (req, res) => {
 });
 
 // 댓글 수정
-router.put("articles/:articleId/comments/:commentId", async (req, res) => {
-    const { commentId } = req.params;
-    const { commentContent } = req.body
+router.put("/articles/:articleId/comments/:commentId", async (req, res) => {
+    // const articleId = mongoose.Types.ObjectId(req.params.articleId);
+    const commentId = mongoose.Types.ObjectId(req.params.commentId);
+    const { commentContent } = req.body;
+    const now = new Date();
 
-    const existsComment = await Comments.findOne({ commentID: Number(commentId) });
+    if (!commentContent.length) 
+        return res.status(400).json({ success: false, errorMessage: "댓글 내용을 입력해주세요."});
+
+    const existsComment = await Comments.findById({ _id: commentId });
     if (existsComment) {
-        await Comments.updateOne({ commentId: Number(commentId) }, { $set : {
+        await Comments.updateOne({ _id: commentId }, { $set : {
             commentContent,
+            commentModifyTime: now.toLocaleString()
         }});
+
+        return res.json({ success: true });
     } else {
         return res.json({ success: false, message: "존재하지 않는 댓글입니다." });
     }
@@ -139,12 +147,12 @@ router.put("articles/:articleId/comments/:commentId", async (req, res) => {
 
 // 댓글 삭제
 router.delete("/articles/:articleId/comments/:commentId", async (req, res) => {
-    const articleId = mongoose.Types.ObjectId(req.params.articleId);
+    // const articleId = mongoose.Types.ObjectId(req.params.articleId);
     const commentId = mongoose.Types.ObjectId(req.params.commentId);
 
-    const existsComment = await Comments.findById( { commentId: commentId });
+    const existsComment = await Comments.findById( { _id: commentId });
     if (existsComment) {
-        await Comments.deleteOne({ commentID: commentId });
+        await Comments.deleteOne({ _id: commentId });
     }
 
     res.json({ success: true });
