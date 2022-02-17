@@ -13,11 +13,11 @@ const commentSchema = mongoose.Schema({
         type: String,
         require: true,
     },
-    createDate : {
+    createTime : {
         type: String,
         require: true,
     },
-    modifyDate : {
+    modifyTime : {
         type: String,
         require: true,
     }

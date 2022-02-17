@@ -138,8 +138,8 @@ router.post("/articles/:articleId/comments", async (req, res) => {
         articleId: objId,
         writer, 
         content,
-        createDate: now,
-        modifyDate: now
+        createTime: now,
+        modifyTime: now
     });
 
     return res.status(201).json({ success: true })
