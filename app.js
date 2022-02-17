@@ -1,5 +1,6 @@
 const express = require("express");
 const connect = require("./schemas/index");
+const helmet = require("helmet");
 const app = express();
 const port = 3000;
 
@@ -11,6 +12,10 @@ const requestMiddleware = (req, res, next) => {
     console.log("Request URL:", req.originalUrl, " - ", new Date());
     next();
 };
+
+app.use(helmet());
+app.use(helmet.contentSecurityPolicy());
+app.use(helmet.hidePoweredBy());
 
 app.use(express.json());
 app.use(express.urlencoded());

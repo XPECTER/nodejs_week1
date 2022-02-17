@@ -1,23 +1,23 @@
 const mongoose = require("mongoose");
 
 const articleSchema = mongoose.Schema({
-    articleTitle : {
+    title : {
         type: String,
         require: true,
     },
-    articleContent : {
+    content : {
         type: String,
         require: true,
     },
-    articleWriter : {
+    writer : {
         type: String,
         require: true,
     },
-    articleCreateTime : {
+    createTime : {
         type: String,
         require: true,
     },
-    articleModifyTime : {
+    modifyTime : {
         type: String,
         require: true,
     }

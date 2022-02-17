@@ -5,19 +5,19 @@ const commentSchema = mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         require: true,
     },
-    commentWriter : {
+    writer : {
         type: String,
         require: true,
     },
-    commentContent : {
+    content : {
         type: String,
         require: true,
     },
-    commentCreateDate : {
+    createDate : {
         type: String,
         require: true,
     },
-    commentModifyDate : {
+    modifyDate : {
         type: String,
         require: true,
     }
